@@ -1,8 +1,6 @@
 ﻿module GameTests
 
-open System
 open Xunit
-open Game
 
 let assert_rolls_makes_score rolls score =
     let game = rolls |> List.fold Game.roll []
@@ -10,11 +8,11 @@ let assert_rolls_makes_score rolls score =
 
 [<Fact>]
 let ``All gutters scores 0`` () =
-    assert_rolls_makes_score [for i in 1..20 -> 0] 0
+    assert_rolls_makes_score [for _ in 1..20 -> 0] 0
 
 [<Fact>]
 let ``All ones scores 20`` () =
-    assert_rolls_makes_score [for i in 1..20 -> 1] 20
+    assert_rolls_makes_score [for _ in 1..20 -> 1] 20
 
 [<Fact>]
 let ``Spare counts next roll twice`` () =
@@ -26,4 +24,4 @@ let ``Strike counts next two rolls twice`` () =
 
 [<Fact>]
 let ``Perfect game scores 300`` () =
-    assert_rolls_makes_score [for i in 1..12 -> 10] 300
+    assert_rolls_makes_score [for _ in 1..12 -> 10] 300

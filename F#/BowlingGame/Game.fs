@@ -3,17 +3,23 @@
     let roll game pins =
         List.append game [pins]
 
-    let private maxRoll = 10
-    let private lastFrame = 10
-
-    let private isStrike fstRoll =
-        fstRoll = maxRoll
-
-    let private isSpare fstRoll sndRoll =
-        fstRoll + sndRoll = maxRoll
-
     let private isLastFrame frame =
-        frame = lastFrame
+        frame = 10
+
+    let rec private addNextRolls numRolls game =
+        if numRolls = 0 then
+            0
+        else
+            let recurse = addNextRolls (numRolls - 1)
+            match game with
+            | [] -> 0
+            | roll::game -> roll + recurse game
+
+    let private strikeBonus game =
+        addNextRolls 2 game
+
+    let private spareBonus game =
+        addNextRolls 1 game
 
     let score (game:int list) =
         let rec scoreFrame currentFrame (game:int list) =
@@ -24,16 +30,12 @@
                 match game with
                 | [] ->
                     0
-                | fst::[] ->
-                    fst
-                | fst::snd::[] when isStrike fst ->
-                    fst + snd + recurse [snd]
-                | fst::snd::[] ->
-                    fst + snd
-                | fst::snd::tail when isStrike fst ->
-                    fst + snd + tail.Head + recurse (snd::tail)
-                | fst::snd::tail when isSpare fst snd ->
-                    fst + snd + tail.Head + recurse tail
-                | fst::snd::tail ->
-                    fst + snd + recurse tail
+                | [roll] ->
+                    roll
+                | 10::game ->
+                    10 + strikeBonus game + recurse game
+                | roll1::roll2::game when roll1 + roll2 = 10 ->
+                    10 + spareBonus game + recurse game
+                | roll1::roll2::game ->
+                    roll1 + roll2 + recurse game
         scoreFrame 1 game
